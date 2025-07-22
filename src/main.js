@@ -132,7 +132,7 @@ resetBtn.addEventListener('click', () => {
   render();
 });
 
-// Вызов initSorting и дальнейшие действия
+// Вызов initSorting 
 const applySorting = initSorting([        // Нам нужно передать сюда массив элементов, которые вызывают сортировку, чтобы изменять их визуальное представление
     sampleTable.header.elements.sortByDate,
     sampleTable.header.elements.sortByTotal
