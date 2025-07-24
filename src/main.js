@@ -14,9 +14,6 @@ import { initFiltering } from './components/filtering.js';
 
 function createComparison(rules) {
     return (searchValue, row) => {
-      // Тут должна быть реализация createComparison, если её нет — добавьте свою
-      // В вашем случае, предполагается, что есть такая функция (например, из либы)
-      // Для простоты пример ниже:
       return rules.searchMultipleFields(searchValue, ['date', 'customer', 'seller'], false)(row);
     };
   }
