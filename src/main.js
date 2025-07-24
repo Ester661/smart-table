@@ -11,48 +11,7 @@ import {initTable} from "./components/table.js";
 import { initPagination } from './components/pagination.js';
 import { initSorting } from './components/sorting.js';
 import { initFiltering } from './components/filtering.js';
-
-function createComparison(rules) {
-    return (searchValue, row) => {
-      return rules.searchMultipleFields(searchValue, ['date', 'customer', 'seller'], false)(row);
-    };
-  }
-  
-  function initSearching(searchFieldName) {
-    const rules = {
-      searchMultipleFields: (searchValue, fields, caseInsensitive = false) => {
-        if (!searchValue || searchValue.trim() === '') {
-          return () => true;
-        }
-        const normalizedSearch = caseInsensitive ? searchValue.toLowerCase() : searchValue;
-        return (row) => {
-          return fields.some(field => {
-            const value = row[field];
-            if (value == null) return false;
-            const text = caseInsensitive ? String(value).toLowerCase() : String(value);
-            return text.includes(normalizedSearch);
-          });
-        };
-      }
-    };
-    const compareSearch = createComparison(rules.searchMultipleFields);
-    return (data, state, action) => {
-      if (action && action.type === 'click' && action.name === 'reset') {
-        const input = document.querySelector(`input[name="${searchFieldName}"]`);
-        if (input) {
-          input.value = '';
-          state[searchFieldName] = '';
-        }
-      }
-      const searchValue = state[searchFieldName] || '';
-      return data.filter(row => {
-        if (searchValue && !compareSearch(searchValue, row)) {
-          return false;
-        }
-        return true;
-      });
-    };
-  }
+import { initSearching } from './components/searching.js';
 
   const applySearching = initSearching('search');
 
@@ -67,7 +26,7 @@ function collectState() {
     const state = processFormData(new FormData(sampleTable.container));
     const rowsPerPage = parseInt(state.rowsPerPage);    // приводим к числу
     const page = parseInt(state.page ?? 1);              // текущая страница по умолчанию 1
-
+    const searchValue = document.querySelector('input[name="search"]').value;
     return {
         ...state,
         rowsPerPage,
@@ -81,7 +40,6 @@ function collectState() {
  */
 function render(action) {
     let state = collectState(); // состояние полей из таблицы
-    state.search = document.querySelector('input[name="search"]').value;
     let result = [...data]; // копируем для последующего изменения
     result = applySearching(result, state, action);
     // @todo: использование
